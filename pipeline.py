@@ -1,5 +1,3 @@
-#Data_Pipelining
-
 import os
 import re
 import sqlite3
@@ -9,6 +7,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+#This is commit Two
 BASE_URL = "http://books.toscrape.com/"
 GBP_TO_INR = 105.50          # fixed, project-defined baseline conversion rate (required, keyless)
 MIN_CATEGORIES = 3
