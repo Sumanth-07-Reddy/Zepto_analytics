@@ -1,33 +1,4 @@
-"""
-Module 1 - Data Pipeline  (/data_pipeline)
-Zepto Capstone Project
-
-End-to-end pipeline:
-    1. Scrape book catalogue data from http://books.toscrape.com (>= 3 categories, >= 60 books)
-    2. Clean & type-convert the scraped fields (price_gbp, rating, in_stock)
-    3. Convert price_gbp -> price_inr using the fixed project baseline rate (1 GBP = 105.50 INR)
-    4. Load into a normalized two-table SQLite schema (categories <-1---N-> books)
-    5. Run >= 5 SQL queries (SELECT/WHERE, ORDER BY, LIMIT, DISTINCT, IN/BETWEEN, JOIN)
-    6. Read back >= 2 query results with pd.read_sql, and reproduce the JOIN query result
-       with pd.merge on in-memory DataFrames, showing both approaches match.
-
-Run with:
-    python pipeline.py
-
-Outputs (written into this folder):
-    books_raw.csv          - raw scraped rows before cleaning
-    books_clean.csv         - cleaned / typed rows actually loaded into SQLite
-    zepto_books.db          - SQLite database (2-table normalized schema)
-    query_outputs.txt       - all 5+ SQL queries with their printed output
-    readback_comparison.txt - pd.read_sql vs pd.merge side-by-side comparison
-
-NOTE ON NETWORK ACCESS:
-    This script requires outbound internet access to books.toscrape.com to run the
-    scraping step (Task 1). Everything downstream (cleaning, SQLite loading, SQL
-    queries, pandas read-back) only depends on books_raw.csv and will run offline
-    once that file exists. If you re-run without network access after the first
-    successful run, set SKIP_SCRAPE = True below to reuse the cached books_raw.csv.
-"""
+#Data_Pipelining
 
 import os
 import re
@@ -413,7 +384,7 @@ def readback_and_compare(conn, out_path=READBACK_OUT):
     are_equal = sql_join_result.equals(pandas_join_result)
     lines.append(f"\nSQL result and pandas-merge result identical: {are_equal}")
 
-    with open(out_path, "w", encoding="utf-8") as f:
+    with open(READBACK_OUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
     print(f"SQL vs pandas-merge join results match: {are_equal}")
