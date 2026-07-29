@@ -413,7 +413,7 @@ def readback_and_compare(conn, out_path=READBACK_OUT):
     are_equal = sql_join_result.equals(pandas_join_result)
     lines.append(f"\nSQL result and pandas-merge result identical: {are_equal}")
 
-    with open(out_path, "w", encoding="utf-8") as f:
+    with open(READBACK_OUT, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
     print(f"SQL vs pandas-merge join results match: {are_equal}")
@@ -452,3 +452,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+# TEST CHANGE
