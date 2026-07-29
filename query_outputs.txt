@@ -1,0 +1,154 @@
+--- q1_top_rated_expensive_in_stock ---
+SELECT title, rating, price_gbp, price_inr
+        FROM books
+        WHERE rating >= 4 AND in_stock = 1
+        ORDER BY price_gbp DESC
+        LIMIT 10;
+columns: ['title', 'rating', 'price_gbp', 'price_inr']
+("The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)", 4, 57.7, 6087.35)
+('A Year in Provence (Provence #1)', 4, 56.88, 6000.84)
+('The Past Never Ends', 4, 56.5, 5960.75)
+('A Flight of Arrows (The Pathfinders #2)', 5, 55.53, 5858.42)
+('Murder at the 42nd Street Library (Raymond Ambler #1)', 4, 54.36, 5734.98)
+("The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)", 5, 52.3, 5517.65)
+('Full Moon over Noahâ\x80\x99s Ark: An Odyssey to Mount Ararat and Beyond', 4, 49.43, 5214.86)
+('A Time of Torment (Charlie Parker #14)', 5, 48.35, 5100.92)
+('Sharp Objects', 4, 47.82, 5045.01)
+('The Murder of Roger Ackroyd (Hercule Poirot #4)', 4, 44.1, 4652.55)
+(10 rows)
+
+--- q2_distinct_categories ---
+SELECT DISTINCT category_name
+        FROM categories
+        ORDER BY category_name;
+columns: ['category_name']
+('Historical Fiction',)
+('Mystery',)
+('Travel',)
+(3 rows)
+
+--- q3_midrange_priced_books ---
+SELECT title, price_gbp
+        FROM books
+        WHERE price_gbp BETWEEN 20 AND 40
+        ORDER BY price_gbp ASC;
+columns: ['title', 'price_gbp']
+('Blood Defense (Samantha Brinkman #1)', 20.3)
+('Love, Lies and Spies', 20.55)
+('Between Shades of Gray', 20.79)
+('Delivering the Truth (Quaker Midwife Mystery #1)', 20.89)
+('Voyager (Outlander #3)', 21.07)
+('The Silkworm (Cormoran Strike #2)', 23.05)
+('The Road to Little Dribbling: Adventures of an American in Britain (Notes From a Small Island #2)', 23.21)
+('Career of Evil (Cormoran Strike #3)', 24.72)
+('The Mysterious Affair at Styles (Hercule Poirot #1)', 24.8)
+('What Happened on Beale Street (Secrets of the South Mysteries #2)', 25.37)
+('Extreme Prey (Lucas Davenport #26)', 25.4)
+('Starlark', 25.83)
+('1,000 Places to See Before You Die', 26.08)
+('Girl With a Pearl Earring', 26.77)
+('Poisonous (Max Revere Novels #3)', 26.8)
+('The Widow', 27.26)
+('Lost Among the Living', 27.7)
+('The Marriage of Opposites', 28.08)
+('The Passion of Dolssa', 28.32)
+('Forever and Forever: The Courtship of Henry Longfellow and Fanny Appleton', 29.69)
+('Mrs. Houdini', 30.25)
+('The Great Railway Bazaar', 30.54)
+('World Without End (The Pillars of the Earth #2)', 32.97)
+('The Secret Healer', 34.56)
+('Most Wanted', 35.28)
+('The Red Tent', 35.66)
+('Vagabonding: An Uncommon Guide to the Art of Long-Term World Travel', 36.94)
+('The House by the Lake', 36.95)
+('Under the Tuscan Sun', 37.33)
+('The Invention of Wings', 37.34)
+('In the Woods (Dublin Murder Squad #1)', 38.38)
+('Neither Here nor There: Travels in Europe', 38.95)
+('A Paris Apartment', 39.01)
+(33 rows)
+
+--- q4_specific_ratings ---
+SELECT title, rating, price_gbp
+        FROM books
+        WHERE rating IN (4, 5)
+        ORDER BY rating DESC, price_gbp ASC;
+columns: ['title', 'rating', 'price_gbp']
+('The Girl You Lost', 5, 12.29)
+("A Spy's Devotion (The Regency Spies of London #1)", 5, 16.97)
+('Between Shades of Gray', 5, 20.79)
+('Voyager (Outlander #3)', 5, 21.07)
+('The Silkworm (Cormoran Strike #2)', 5, 23.05)
+('What Happened on Beale Street (Secrets of the South Mysteries #2)', 5, 25.37)
+('1,000 Places to See Before You Die', 5, 26.08)
+('The Passion of Dolssa', 5, 28.32)
+('Mrs. Houdini', 5, 30.25)
+('The Red Tent', 5, 35.66)
+('While You Were Mine', 5, 41.32)
+('A Time of Torment (Charlie Parker #14)', 5, 48.35)
+("The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)", 5, 52.3)
+('A Flight of Arrows (The Pathfinders #2)', 5, 55.53)
+('Delivering the Truth (Quaker Midwife Mystery #1)', 4, 20.89)
+('The Mysterious Affair at Styles (Hercule Poirot #1)', 4, 24.8)
+('Lost Among the Living', 4, 27.7)
+('The Marriage of Opposites', 4, 28.08)
+('World Without End (The Pillars of the Earth #2)', 4, 32.97)
+('A Paris Apartment', 4, 39.01)
+('The Murder of Roger Ackroyd (Hercule Poirot #4)', 4, 44.1)
+('Sharp Objects', 4, 47.82)
+('Full Moon over Noahâ\x80\x99s Ark: An Odyssey to Mount Ararat and Beyond', 4, 49.43)
+('Murder at the 42nd Street Library (Raymond Ambler #1)', 4, 54.36)
+('The Past Never Ends', 4, 56.5)
+('A Year in Provence (Provence #1)', 4, 56.88)
+("The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)", 4, 57.7)
+(27 rows)
+
+--- q5_join_top10_rated_per_category ---
+SELECT category_name, title, rating, price_gbp
+        FROM (
+            SELECT
+                c.category_name AS category_name,
+                b.title         AS title,
+                b.rating        AS rating,
+                b.price_gbp     AS price_gbp,
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.category_id
+                    ORDER BY b.rating DESC, b.price_gbp ASC
+                ) AS rn
+            FROM books b
+            JOIN categories c ON b.category_id = c.category_id
+        )
+        WHERE rn <= 10
+        ORDER BY category_name, rating DESC, price_gbp ASC;
+columns: ['category_name', 'title', 'rating', 'price_gbp']
+('Historical Fiction', "A Spy's Devotion (The Regency Spies of London #1)", 5, 16.97)
+('Historical Fiction', 'Between Shades of Gray', 5, 20.79)
+('Historical Fiction', 'Voyager (Outlander #3)', 5, 21.07)
+('Historical Fiction', 'The Passion of Dolssa', 5, 28.32)
+('Historical Fiction', 'Mrs. Houdini', 5, 30.25)
+('Historical Fiction', 'The Red Tent', 5, 35.66)
+('Historical Fiction', 'While You Were Mine', 5, 41.32)
+('Historical Fiction', 'A Flight of Arrows (The Pathfinders #2)', 5, 55.53)
+('Historical Fiction', 'Lost Among the Living', 4, 27.7)
+('Historical Fiction', 'The Marriage of Opposites', 4, 28.08)
+('Mystery', 'The Girl You Lost', 5, 12.29)
+('Mystery', 'The Silkworm (Cormoran Strike #2)', 5, 23.05)
+('Mystery', 'What Happened on Beale Street (Secrets of the South Mysteries #2)', 5, 25.37)
+('Mystery', 'A Time of Torment (Charlie Parker #14)', 5, 48.35)
+('Mystery', "The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)", 5, 52.3)
+('Mystery', 'Delivering the Truth (Quaker Midwife Mystery #1)', 4, 20.89)
+('Mystery', 'The Mysterious Affair at Styles (Hercule Poirot #1)', 4, 24.8)
+('Mystery', 'The Murder of Roger Ackroyd (Hercule Poirot #4)', 4, 44.1)
+('Mystery', 'Sharp Objects', 4, 47.82)
+('Mystery', 'Murder at the 42nd Street Library (Raymond Ambler #1)', 4, 54.36)
+('Travel', '1,000 Places to See Before You Die', 5, 26.08)
+('Travel', 'Full Moon over Noahâ\x80\x99s Ark: An Odyssey to Mount Ararat and Beyond', 4, 49.43)
+('Travel', 'A Year in Provence (Provence #1)', 4, 56.88)
+('Travel', 'Under the Tuscan Sun', 3, 37.33)
+('Travel', 'Neither Here nor There: Travels in Europe', 3, 38.95)
+('Travel', 'See America: A Celebration of Our National Parks & Treasured Sites', 3, 48.87)
+('Travel', 'Vagabonding: An Uncommon Guide to the Art of Long-Term World Travel', 2, 36.94)
+('Travel', 'A Summer In Europe', 2, 44.34)
+('Travel', "It's Only the Himalayas", 2, 45.17)
+('Travel', 'The Road to Little Dribbling: Adventures of an American in Britain (Notes From a Small Island #2)', 1, 23.21)
+(30 rows)
